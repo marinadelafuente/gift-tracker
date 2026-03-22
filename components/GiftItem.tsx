@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Linking } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+
 import { Gift } from './GiftList';
 import { CheckIcon, CrossIcon, UndoIcon } from '../assets/icons';
 
@@ -10,7 +11,12 @@ interface GiftItemProps {
   onToggleCompleted: (id: string) => void;
 }
 
-export default function GiftItem({ gift, onDelete, onEdit, onToggleCompleted }: GiftItemProps) {
+export default function GiftItem({
+  gift,
+  onDelete,
+  onEdit,
+  onToggleCompleted,
+}: GiftItemProps) {
   return (
     <View
       className={`flex-row items-center justify-between bg-white rounded-lg border border-gray-50 ${
@@ -22,19 +28,19 @@ export default function GiftItem({ gift, onDelete, onEdit, onToggleCompleted }: 
         onPress={() => onEdit(gift.id)}
       >
         <View className="flex-row items-center">
-          {gift.imageUri && (
-            <Image source={{ uri: gift.imageUri }} className="w-12 h-12 rounded-lg" />
-          )}
+          {gift.imageUri && <Image source={{ uri: gift.imageUri }} className="w-12 h-12 rounded-lg" />}
           <View className="pl-3">
-            <Text className={`text-lg font-medium`}>{gift.name}</Text>
-            {gift.price && <Text className={`text-sm text-gray-500}`}>${gift.price}</Text>}
+            <Text className="text-lg font-medium">{gift.name}</Text>
+            {gift.price && <Text className="text-sm text-gray-500">${gift.price}</Text>}
+
             {gift.completed && (
               <View className="bg-green-100 px-2 py-1 rounded-full w-fit">
                 <Text className="text-xs text-green-800 font-medium w-fit">Bought</Text>
               </View>
             )}
+
             {gift.description && !gift.completed && (
-              <Text className={`text-sm text-gray-600`} numberOfLines={1}>
+              <Text className="text-sm text-gray-600" numberOfLines={1}>
                 {gift.description}
               </Text>
             )}
@@ -59,3 +65,4 @@ export default function GiftItem({ gift, onDelete, onEdit, onToggleCompleted }: 
     </View>
   );
 }
+

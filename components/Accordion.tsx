@@ -1,6 +1,7 @@
-import ChevronIcon from 'assets/icons/ChevronIcon';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+
+import ChevronIcon from '@/assets/icons/ChevronIcon';
 
 interface AccordionProps {
   title: string;
@@ -34,3 +35,4 @@ export default function Accordion({ title, children, count }: AccordionProps) {
     </View>
   );
 }
+

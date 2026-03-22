@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
+  Alert,
+  Image,
+  Keyboard,
+  Modal,
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
-  Modal,
   TouchableWithoutFeedback,
-  Keyboard,
-  Image,
+  View,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+
 import { Gift } from './GiftList';
 
 interface GiftModalProps {
@@ -39,10 +40,7 @@ export default function GiftModal({
     (async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert(
-          'Permission needed',
-          'Please grant camera roll permissions to add images to gifts.'
-        );
+        Alert.alert('Permission needed', 'Please grant camera roll permissions to add images to gifts.');
       }
     })();
   }, [recipientId]);
@@ -59,7 +57,7 @@ export default function GiftModal({
       if (!result.canceled) {
         setImageUri(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch (e) {
       Alert.alert('Error', 'Failed to pick image');
     }
   };
@@ -81,11 +79,11 @@ export default function GiftModal({
       if (!result.canceled) {
         setImageUri(result.assets[0].uri);
       }
-    } catch (error) {
-      console.error('Camera error:', error);
+    } catch (e) {
+      console.error('Camera error:', e);
       Alert.alert(
         'Error',
-        'Failed to access camera. Please check your camera permissions and try again.'
+        'Failed to access camera. Please check your camera permissions and try again.',
       );
     }
   };
@@ -213,11 +211,15 @@ export default function GiftModal({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  className={`px-6 py-2.5 rounded-lg ${isNameValid ? 'bg-button active:bg-textheader' : 'bg-gray-300'}`}
+                  className={`px-6 py-2.5 rounded-lg ${
+                    isNameValid ? 'bg-button active:bg-textheader' : 'bg-gray-300'
+                  }`}
                   onPress={handleSave}
                   disabled={!isNameValid}
                 >
-                  <Text className="text-white font-semibold">{editingGift ? 'Save' : 'Add'}</Text>
+                  <Text className="text-white font-semibold">
+                    {editingGift ? 'Save' : 'Add'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -227,3 +229,4 @@ export default function GiftModal({
     </Modal>
   );
 }
+

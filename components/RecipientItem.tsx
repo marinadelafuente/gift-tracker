@@ -1,5 +1,6 @@
 import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { Link } from 'expo-router';
+
 import { Recipient } from './RecipientList';
 import { EditIcon, ChevronIcon, CrossIcon } from '../assets/icons';
 
@@ -50,6 +51,7 @@ export default function RecipientItem({
           </TouchableOpacity>
         </View>
       )}
+
       <Link href={`/recipients/${recipient.id}`} asChild>
         <TouchableOpacity className="flex-row items-center flex-1 p-4 ">
           <Image source={{ uri: avatarUrl }} className="w-12 h-12 rounded-full" />
@@ -65,3 +67,4 @@ export default function RecipientItem({
     </View>
   );
 }
+

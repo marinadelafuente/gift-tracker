@@ -7,3 +7,4 @@ export default function getAvatarUrl(seed: string, style: string) {
   if (style === 'initials') return baseUrl;
   return `${baseUrl}${AVATAR_OPTIONS}`;
 }
+

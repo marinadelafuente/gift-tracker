@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import getAvatarUrl from '@/helpers/getAvatarUrl';
+import formatDate from '@/helpers/formatDate';
+
 import RecipientItem from './RecipientItem';
-import getAvatarUrl from 'helpers/getAvatarUrl';
 import RecipientModal from './RecipientModal';
-import formatDate from 'helpers/formatDate';
 
 export interface Recipient {
   id: string;
@@ -31,7 +33,7 @@ export default function RecipientList() {
       if (storedRecipients) {
         setRecipients(JSON.parse(storedRecipients));
       }
-    } catch (error) {
+    } catch (e) {
       Alert.alert('Error', 'Failed to load recipients');
     }
   };
@@ -39,7 +41,7 @@ export default function RecipientList() {
   const saveRecipients = async (updatedRecipients: Recipient[]) => {
     try {
       await AsyncStorage.setItem('recipients', JSON.stringify(updatedRecipients));
-    } catch (error) {
+    } catch (e) {
       Alert.alert('Error', 'Failed to save recipients');
     }
   };
@@ -82,10 +84,12 @@ export default function RecipientList() {
         avatarStyle: recipientData.avatarStyle || '',
         completed: false,
       };
+
       const updatedRecipients = [...recipients, newRecipientItem];
       setRecipients(updatedRecipients);
       saveRecipients(updatedRecipients);
     }
+
     setIsModalVisible(false);
     setEditingRecipient(null);
   };
@@ -103,11 +107,14 @@ export default function RecipientList() {
           </TouchableOpacity>
         )}
       </View>
+
       {!recipients.length && (
         <Text className="text-gray-500 px-5">
-          Keep track of your gift ideas for your friends and family! Start adding some people first!
+          Keep track of your gift ideas for your friends and family! Start adding some people
+          first!
         </Text>
       )}
+
       {(isEditMode && editingRecipient) || (!isEditMode && !editingRecipient) ? (
         <RecipientModal
           isVisible={isModalVisible}
@@ -120,6 +127,7 @@ export default function RecipientList() {
           isEditMode={isEditMode}
         />
       ) : null}
+
       <FlatList
         data={recipients}
         keyExtractor={recipient => recipient.id}
@@ -147,3 +155,4 @@ export default function RecipientList() {
     </View>
   );
 }
+

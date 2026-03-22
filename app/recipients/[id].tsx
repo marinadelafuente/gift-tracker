@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import GiftList from '@components/GiftList';
-import { Recipient } from '@components/RecipientList';
-import getAvatarUrl from 'helpers/getAvatarUrl';
+
+import GiftList from '@/components/GiftList';
+import { Recipient } from '@/components/RecipientList';
+import getAvatarUrl from '@/helpers/getAvatarUrl';
 
 export default function RecipientDetails() {
-  const { id }: { id: string } = useLocalSearchParams();
-
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const recipientId = id ?? '';
   const [recipient, setRecipient] = useState<Recipient | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,8 +35,8 @@ export default function RecipientDetails() {
         } else {
           setError('No recipients found');
         }
-      } catch (error) {
-        console.error('Error loading recipient:', error);
+      } catch (e) {
+        console.error('Error loading recipient:', e);
         setError('Failed to load recipient details');
       }
     };
@@ -80,8 +82,9 @@ export default function RecipientDetails() {
             )}
           </View>
         </View>
-        <GiftList recipientId={id} />
+        <GiftList recipientId={recipientId} />
       </View>
     </SafeAreaView>
   );
 }
+

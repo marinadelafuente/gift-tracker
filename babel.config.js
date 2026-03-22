@@ -1,11 +1,13 @@
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
+
   return {
-    presets: ['babel-preset-expo'],
+    presets: ["babel-preset-expo"],
     plugins: [
-      'nativewind/babel',
-      'expo-router/babel',
-      'react-native-reanimated/plugin'
-    ]
+      // Required for React Native Reanimated.
+      "react-native-reanimated/plugin",
+      // Enables React Compiler transforms.
+      "babel-plugin-react-compiler",
+    ],
   };
-}; 
+};

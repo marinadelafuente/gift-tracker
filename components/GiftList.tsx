@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import GiftItem from './GiftItem';
+
 import Accordion from './Accordion';
+import GiftItem from './GiftItem';
 import GiftModal from './GiftModal';
 
 export interface Gift {
@@ -26,6 +27,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
   const [editingGift, setEditingGift] = useState<Gift | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+
   useEffect(() => {
     loadGifts();
   }, [recipientId]);
@@ -39,7 +41,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
         setGifts(parsedGifts);
       }
       setIsLoading(false);
-    } catch (error) {
+    } catch (e) {
       Alert.alert('Error', 'Failed to load gifts');
       setIsLoading(false);
     }
@@ -48,7 +50,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
   const saveGifts = async (updatedGifts: Gift[]) => {
     try {
       await AsyncStorage.setItem(`gifts_${recipientId}`, JSON.stringify(updatedGifts));
-    } catch (error) {
+    } catch (e) {
       Alert.alert('Error', 'Failed to save gifts');
     }
   };
@@ -78,6 +80,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
         imageUri: giftData.imageUri,
         completed: false,
       };
+
       const updatedGifts = [...gifts, newGift];
       setGifts(updatedGifts);
       saveGifts(updatedGifts);
@@ -97,26 +100,21 @@ export default function GiftList({ recipientId }: GiftListProps) {
   };
 
   const deleteGift = (id: string) => {
-    Alert.alert(
-      'Delete Gift',
-      'Are you sure you want to delete this gift?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
+    Alert.alert('Delete Gift', 'Are you sure you want to delete this gift?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          const updatedGifts = gifts.filter(gift => gift.id !== id);
+          setGifts(updatedGifts);
+          saveGifts(updatedGifts);
         },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            const updatedGifts = gifts.filter(gift => gift.id !== id);
-            setGifts(updatedGifts);
-            saveGifts(updatedGifts);
-          },
-        },
-      ],
-      { cancelable: true }
-    );
+      },
+    ]);
   };
 
   const toggleGift = (id: string) => {
@@ -147,6 +145,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
   return (
     <View className="flex-1">
       <Text className="text-xl font-semibold text-textheader my-5">Gift Ideas</Text>
+
       {(isEditMode && editingGift) || (!isEditMode && !editingGift) ? (
         <GiftModal
           isVisible={isModalVisible}
@@ -179,6 +178,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
           </View>
         }
       />
+
       {completedGifts.length > 0 && (
         <Accordion title="Past Gifts" count={completedGifts.length}>
           <FlatList
@@ -197,6 +197,7 @@ export default function GiftList({ recipientId }: GiftListProps) {
           />
         </Accordion>
       )}
+
       <TouchableOpacity
         className="bg-button p-4 rounded-2xl shadow-lg"
         onPress={() => setIsModalVisible(true)}
@@ -206,3 +207,4 @@ export default function GiftList({ recipientId }: GiftListProps) {
     </View>
   );
 }
+

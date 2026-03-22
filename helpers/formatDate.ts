@@ -10,3 +10,4 @@ export default function formatDate(dateString: string | null) {
     year: 'numeric',
   });
 }
+
