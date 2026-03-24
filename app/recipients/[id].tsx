@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 import GiftList from '@/components/GiftList';
 import { Recipient } from '@/components/RecipientList';
@@ -61,7 +60,7 @@ export default function RecipientDetails() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <View className="flex-1 bg-background">
       <StatusBar style="auto" />
       <View className="flex-1 px-4 pt-5 bg-background">
         <View className="flex-row rounded-lg shadow-lg mb-2 border-2 border-button bg-white p-2">
@@ -82,9 +81,10 @@ export default function RecipientDetails() {
             )}
           </View>
         </View>
-        <GiftList recipientId={recipientId} />
+        <View className="flex-1">
+          <GiftList recipientId={recipientId} />
+        </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
-

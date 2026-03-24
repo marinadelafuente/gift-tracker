@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
 import {
   Image,
   Keyboard,
@@ -10,12 +12,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
-import { Recipient } from './RecipientList';
 import ChevronIcon from '@/assets/icons/ChevronIcon';
 import formatDate from '@/helpers/formatDate';
 import getAvatarUrl from '@/helpers/getAvatarUrl';
+import { Recipient } from './RecipientList';
 
 interface RecipientModalProps {
   isVisible: boolean;
@@ -46,7 +47,7 @@ export default function RecipientModal({
   const [name, setName] = useState(editingRecipient?.name ?? '');
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(
-    editingRecipient?.birthday ? new Date(editingRecipient.birthday) : null,
+    editingRecipient?.birthday ? new Date(editingRecipient.birthday) : null
   );
 
   const [selectedAvatar, setSelectedAvatar] = useState<{ seed: string; style: string }>({
@@ -99,7 +100,7 @@ export default function RecipientModal({
 
     const randomAvatars = Array.from(
       { length: AVATARS_PER_PAGE * 2 - 1 - (currentAvatar ? 1 : 0) },
-      () => generateRandomAvatar(),
+      () => generateRandomAvatar()
     );
 
     const initialAvatars = [
@@ -201,10 +202,14 @@ export default function RecipientModal({
   const handleClose = () => {
     resetForm();
     onClose();
-    Keyboard.dismiss();
+    dismissKeyboard();
   };
 
   const isNameValid = name.trim().length > 0;
+
+  const dismissKeyboard = () => {
+    if (Platform.OS !== 'web') Keyboard.dismiss();
+  };
 
   return (
     <Modal
@@ -215,7 +220,7 @@ export default function RecipientModal({
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <View className="flex-1 justify-center items-center bg-black/50">
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
             <View className="bg-white p-5 rounded-lg w-11/12 max-h-[80%]">
               <Text className="text-xl font-bold mb-4">
                 {editingRecipient ? 'Edit' : 'Add New'} Giftee
@@ -243,11 +248,10 @@ export default function RecipientModal({
                     <TouchableOpacity
                       key={avatar.id}
                       onPress={() => setSelectedAvatar({ seed: avatar.seed, style: avatar.style })}
-                      className={`w-[22%] aspect-square mb-2 rounded-xl border-2 ${
-                        selectedAvatar.seed === avatar.seed
-                          ? 'border-button'
-                          : 'border-transparent'
-                      }`}
+                      className={clsx(
+                        'w-[22%] aspect-square mb-2 rounded-xl border-2',
+                        selectedAvatar.seed === avatar.seed ? 'border-button' : 'border-transparent'
+                      )}
                     >
                       <Image
                         source={{
@@ -269,7 +273,7 @@ export default function RecipientModal({
               <TouchableOpacity
                 className="h-10 border border-gray-300 rounded-lg px-2.5 mb-4 justify-center"
                 onPress={() => {
-                  Keyboard.dismiss();
+                  dismissKeyboard();
                   setShowDatePicker(true);
                 }}
               >
@@ -320,4 +324,3 @@ export default function RecipientModal({
     </Modal>
   );
 }
-

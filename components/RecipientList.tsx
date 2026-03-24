@@ -1,9 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import getAvatarUrl from '@/helpers/getAvatarUrl';
 import formatDate from '@/helpers/formatDate';
+import getAvatarUrl from '@/helpers/getAvatarUrl';
 
 import RecipientItem from './RecipientItem';
 import RecipientModal from './RecipientModal';
@@ -110,8 +110,7 @@ export default function RecipientList() {
 
       {!recipients.length && (
         <Text className="text-gray-500 px-5">
-          Keep track of your gift ideas for your friends and family! Start adding some people
-          first!
+          Keep track of your gift ideas for your friends and family! Start adding some people first!
         </Text>
       )}
 
@@ -155,4 +154,3 @@ export default function RecipientList() {
     </View>
   );
 }
-

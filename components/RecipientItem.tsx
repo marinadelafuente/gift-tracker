@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import { Link } from 'expo-router';
+import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 
+import { ChevronIcon, CrossIcon, EditIcon } from '../assets/icons';
 import { Recipient } from './RecipientList';
-import { EditIcon, ChevronIcon, CrossIcon } from '../assets/icons';
 
 interface RecipientItemProps {
   recipient: Recipient;
@@ -67,4 +67,3 @@ export default function RecipientItem({
     </View>
   );
 }
-

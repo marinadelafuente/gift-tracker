@@ -1,7 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, Text, TouchableOpacity, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import Accordion from './Accordion';
 import GiftItem from './GiftItem';
 import GiftModal from './GiftModal';
@@ -26,7 +25,6 @@ export default function GiftList({ recipientId }: GiftListProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingGift, setEditingGift] = useState<Gift | undefined>();
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     loadGifts();
@@ -38,7 +36,12 @@ export default function GiftList({ recipientId }: GiftListProps) {
       const storedGifts = await AsyncStorage.getItem(`gifts_${recipientId}`);
       if (storedGifts) {
         const parsedGifts = JSON.parse(storedGifts);
-        setGifts(parsedGifts);
+        const normalizedGifts: Gift[] = parsedGifts.map((gift: any) => ({
+          ...gift,
+          name: String(gift?.name ?? gift?.title ?? '').trim(),
+          completed: Boolean(gift?.completed),
+        }));
+        setGifts(normalizedGifts);
       }
       setIsLoading(false);
     } catch (e) {
@@ -87,14 +90,12 @@ export default function GiftList({ recipientId }: GiftListProps) {
     }
     setIsModalVisible(false);
     setEditingGift(undefined);
-    setIsEditMode(false);
   };
 
   const editGift = (id: string) => {
     const gift = gifts.find(gift => gift.id === id);
     if (gift) {
       setEditingGift(gift);
-      setIsEditMode(true);
       setIsModalVisible(true);
     }
   };
@@ -143,25 +144,27 @@ export default function GiftList({ recipientId }: GiftListProps) {
   const completedGifts = gifts.filter(gift => gift.completed);
 
   return (
-    <View className="flex-1">
-      <Text className="text-xl font-semibold text-textheader my-5">Gift Ideas</Text>
+    <View className="flex-1" testID="gift-list-view">
+      <Text className="text-xl font-semibold text-textheader my-5 will-change-variable">
+        Gift Ideas
+      </Text>
 
-      {(isEditMode && editingGift) || (!isEditMode && !editingGift) ? (
-        <GiftModal
-          isVisible={isModalVisible}
-          onClose={() => {
-            setIsModalVisible(false);
-            setEditingGift(undefined);
-          }}
-          onSave={handleSaveGift}
-          editingGift={editingGift}
-          recipientId={recipientId}
-        />
-      ) : null}
+      <GiftModal
+        isVisible={isModalVisible}
+        onClose={() => {
+          setIsModalVisible(false);
+          setEditingGift(undefined);
+        }}
+        onSave={handleSaveGift}
+        editingGift={editingGift}
+        recipientId={recipientId}
+      />
 
       <FlatList
         data={activeGifts}
         keyExtractor={item => item.id}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 16 }}
         renderItem={({ item }) => (
           <GiftItem
             gift={item}
@@ -181,30 +184,29 @@ export default function GiftList({ recipientId }: GiftListProps) {
 
       {completedGifts.length > 0 && (
         <Accordion title="Past Gifts" count={completedGifts.length}>
-          <FlatList
-            data={completedGifts}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <View className="opacity-60">
-                <GiftItem
-                  gift={item}
-                  onDelete={deleteGift}
-                  onEdit={editGift}
-                  onToggleCompleted={toggleGift}
-                />
-              </View>
-            )}
-          />
+          {completedGifts.map(item => (
+            <View key={item.id} className="opacity-60" testID={`completed-gift-item-${item.id}`}>
+              <GiftItem
+                gift={item}
+                onDelete={deleteGift}
+                onEdit={editGift}
+                onToggleCompleted={toggleGift}
+              />
+            </View>
+          ))}
         </Accordion>
       )}
 
       <TouchableOpacity
+        testID="add-gift-btn"
         className="bg-button p-4 rounded-2xl shadow-lg"
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => {
+          setEditingGift(undefined);
+          setIsModalVisible(true);
+        }}
       >
         <Text className="text-white font-medium text-lg text-center">+ Add Gift Idea</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
